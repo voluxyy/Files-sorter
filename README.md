@@ -1,6 +1,6 @@
 # Files-sorter
 
-Ce logiciel vous permet de trier des dossiers remplies de fichiers.\
+Ce logiciel vous permet de trier des dossiers remplies de fichiers.
 
 Il a été écrit seulement en go et possède une interface graphique faite
 avec la labrairie fyne.
