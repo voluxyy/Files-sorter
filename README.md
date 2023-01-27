@@ -17,7 +17,7 @@ Je souhaite récupérer les fichiers qui ont dans leurs noms les
 caractères : *"Nou"* et qui sont situés dans le dossier : 
 *"C:\Users\anael\Desktop\Dossier"*
 
-Voici le logiciel une fois les infos entrés :
+Voici le logiciel une fois les infos entrés :\
 ![Screen2](./images/screen2.png)
 
 Voici le dossier en question :
