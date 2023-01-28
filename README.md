@@ -13,7 +13,7 @@ Vous pouvez ````git clone```` le repository et lancer le logiciel avec
 ```go run .```.
 
 Sinon vous pouvez cloner le repository et faire un 
-```go build SortFileInDirectory.go```. Afin d'avoir un .exe et de ne plus 
+```go build -ldflags="-H windowsgui"```. Afin d'avoir un .exe et de ne plus 
 dépendre du repository.
 ***
 
