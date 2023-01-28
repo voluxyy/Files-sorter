@@ -21,7 +21,7 @@ func main() {
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Files sorter")
 
-	iconLink, errIcon := fyne.LoadResourceFromPath("./images/icon.png")
+	iconLink, errIcon := fyne.LoadResourceFromURLString("https://github.com/voluxyy/Files-sorter/blob/main/images/icon.png?raw=true")
 	if errIcon != nil {
 		log.Println(errIcon)
 	}
