@@ -8,6 +8,15 @@ avec la labrairie fyne.
 ![Screen1](./images/screen1.png)
 ***
 
+### Téléchargement :
+Vous pouvez ````git clone```` le repository et lancer le logiciel avec 
+```go run .```.
+
+Sinon vous pouvez cloner le repository et faire un 
+```go build SortFileInDirectory.go```. Afin d'avoir un .exe et de ne plus 
+dépendre du repository.
+***
+
 ### Utilisation :
 Il suffit de spécifier le dossier à trier et les caractéres qui
 sont similaires à tous les noms de fichier que vous voulez récupérer.
