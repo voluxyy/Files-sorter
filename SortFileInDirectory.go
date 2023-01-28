@@ -51,13 +51,11 @@ func main() {
 	buttonFolder := widget.NewButton("Dossier", func() {
 		dialog.ShowFolderOpen(func(dir fyne.ListableURI, err error) {
 			if err != nil {
-				label3.SetText(`Gestion d'erreur : Problème avec le selecteur de répertoire.`)
+				label3.SetText(`Gestion d'erreur : Problème avec le sélecteur de répertoire.`)
 			}
-			if dir.Authority() == "inutile pour le moment" {
-				label3.SetText(`Gestion d'erreur : Problème d'autorité d'accès au répertoire.`)
-			}
+
 			dirInfo = dir
-			label.SetText("Répetoire : " + dirInfo.Path())
+			label.SetText("Répertoire : " + dirInfo.Path())
 		}, myWindow)
 	})
 
@@ -136,7 +134,7 @@ func SortFileInDirectory(repository string, character string, isCheck bool) (str
 		fmt.Print(errCmd)
 	}
 
-	// Vérify if user put data
+	// Verify if user put data
 	if repository == "" {
 		return "Aucun dossier spécifié.", false
 	}
@@ -148,7 +146,7 @@ func SortFileInDirectory(repository string, character string, isCheck bool) (str
 	// Read the directory to see files name which are into
 	filesName, errRepository := os.ReadDir(repository)
 	if errRepository != nil {
-		return "La destination donné n'a pas été trouvé, elle n'existe peut-être pas.", false
+		return "La destination donné n'a pas été trouvée, elle n'existe peut-être pas.", false
 	}
 
 	// To find files which has charset given by the user
@@ -210,7 +208,6 @@ func SortFileInDirectory(repository string, character string, isCheck bool) (str
 	// Create new repository named Vos_fichiers
 	errCreateDir := os.Mkdir(Path, fs.ModePerm)
 	if errCreateDir != nil {
-		log.Println(errCreateDir)
 		return "Impossible de créer le répertoire.", false
 	}
 
@@ -227,5 +224,5 @@ func SortFileInDirectory(repository string, character string, isCheck bool) (str
 		}
 	}
 
-	return `Vos fichiers ont correctement été déplacés ! Dans le fichier "Vos_fichiers".`, true
+	return `Vos fichiers ont correctement été déplacés ! Dans le dossier "Vos_fichiers".`, true
 }
