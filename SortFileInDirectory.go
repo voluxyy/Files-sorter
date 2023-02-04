@@ -68,6 +68,7 @@ func main() {
 		}
 	})
 
+	var hasBeenLaunch bool
 	launchButton := widget.NewButton("Lancer", func() {
 		// Update label status
 		label2.SetText(`Résultat : En cours d'exécution..`)
@@ -83,6 +84,42 @@ func main() {
 		// Update labels
 		label2.SetText(`Résultat : Terminé..`)
 		label3.SetText(`Gestion d'erreur : ` + result)
+		hasBeenLaunch = true
+	})
+
+	backButton := widget.NewButton("Revenir en arrière", func() {
+		if hasBeenLaunch == true {
+			// Var source
+			var source string
+			if checked == true {
+				source = os.Getenv("USERPROFILE") + "/" + "Desktop" + "/" + "Vos_fichiers"
+			} else {
+				source = repository + "/" + "Vos_fichiers"
+			}
+
+			// Update label status
+			label2.SetText(`Résultat : En cours d'exécution..`)
+			time.Sleep(time.Second * 2)
+
+			// Recupèration des données
+			repository = dirInfo.Path()
+			character = inputCharacter.Text
+
+			// Action
+			result, isGood := GetBackFileInDirectory(source, repository)
+
+			// Update labels
+			label2.SetText(`Résultat : Terminé..`)
+			label3.SetText(`Gestion d'erreur : ` + result)
+			if isGood == true {
+				hasBeenLaunch = false
+			}
+		} else {
+			// Update labels
+			label2.SetText(`Résultat : Hmmm.`)
+			label3.SetText(`Gestion d'erreur : Vous n'avez même pas encore lancer.`)
+		}
+
 	})
 
 	quitButton := widget.NewButton("Quitter", func() {
@@ -99,8 +136,12 @@ func main() {
 		label1,
 	)
 
-	vBox3 := container.NewVBox(
+	hBox3 := container.NewHBox(
 		launchButton,
+		backButton,
+	)
+
+	vBox3 := container.NewVBox(
 		label2,
 		label3,
 	)
@@ -114,6 +155,7 @@ func main() {
 		hBox2,
 		inputCharacter,
 		check,
+		hBox3,
 		vBox3,
 		hBox4,
 	)
@@ -149,51 +191,21 @@ func SortFileInDirectory(repository string, character string, isCheck bool) (str
 		return "La destination donné n'a pas été trouvée, elle n'existe peut-être pas.", false
 	}
 
-	// To find files which has charset given by the user
-	var printFile string
+	// Append every files that
+	var TabFile []string
 	for _, file := range filesName {
 		for i := 0; i < len(file.Name())-(len(character)-1); i++ {
 			if len(character) < 2 {
 				if file.Name()[i:i+len(character)] == character {
-					printFile += file.Name() + "\n"
+					TabFile = append(TabFile, file.Name())
 					break
 				}
 			} else {
 				if file.Name()[i:i+len(character)] == character {
-					printFile += file.Name() + "\n"
+					TabFile = append(TabFile, file.Name())
 					break
 				}
 			}
-		}
-	}
-
-	// If there is no files with the charset of the user
-	if printFile == "" {
-		return "Aucun fichier trouvé.", false
-	}
-
-	// Counter to know how much files there is
-	var LenTab int
-	for _, Char := range printFile {
-		if Char == 10 {
-			LenTab++
-		}
-	}
-
-	// Append nothing to TabFile to init is length
-	var TabFile []string
-	for LenTab != 0 {
-		TabFile = append(TabFile, "")
-		LenTab--
-	}
-
-	// Append each name file into TabFile
-	var count int
-	for _, Char := range printFile {
-		if Char == 10 {
-			count++
-		} else {
-			TabFile[count] += string(Char)
 		}
 	}
 
@@ -225,4 +237,49 @@ func SortFileInDirectory(repository string, character string, isCheck bool) (str
 	}
 
 	return `Vos fichiers ont correctement été déplacés ! Dans le dossier "Vos_fichiers".`, true
+}
+
+func GetBackFileInDirectory(source string, destination string) (string, bool) {
+	// Command Prompt doesn't exist in %PATH%, so I need to use cmd.exe and in arguments use /c cd
+	args := strings.Split("/c cd "+source, " ")
+
+	cmd := exec.Command("cmd.exe", args...)
+	// Set _ to "out" to use the output in []bytes and to use the directory where has been executed the script
+	_, errCmd := cmd.Output()
+	if errCmd != nil {
+		fmt.Print(errCmd)
+	}
+
+	// Read the directory to see files name which are into
+	filesName, errRepository := os.ReadDir(source)
+	if errRepository != nil {
+		return "La destination donné n'a pas été trouvée, recoché l'option de création sur le bureau si vous l'avez enlevé.", false
+	}
+
+	// Append each name file into TabFile
+	var TabFile []string
+	for _, file := range filesName {
+		TabFile = append(TabFile, file.Name())
+	}
+
+	// Move files into new directory
+	var errMoveFile error
+	var NewPath string
+	for i := 0; i < len(TabFile); i++ {
+		OriginalPath := source + "/" + TabFile[i]
+		NewPath = destination + "/" + TabFile[i]
+
+		errMoveFile = os.Rename(OriginalPath, NewPath)
+		if errMoveFile != nil {
+			return `Soucis pour remettre les fichiers à leur place.`, false
+		}
+	}
+
+	// Remove directory
+	errRemove := os.RemoveAll(source)
+	if errRemove != nil {
+		return `Soucis pour supprimer le dossier "Vos_fichiers".`, false
+	}
+
+	return `Vos fichiers ont été remis à leur place d'origine.`, true
 }
